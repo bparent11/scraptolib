@@ -1,4 +1,3 @@
-# import undetected_chromedriver as uc
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -9,6 +8,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 from pathlib import Path
 import json
+import time
 
 from scraptolib.utils.helpers import human_delay, init_logger
 
@@ -50,36 +50,6 @@ class CardsScraper:
             raise KeyError(
                 "Le bouton pour refuser les cookies n'a pas été trouvé"
             ) from NotFound
-        
-        # def check_retry_later(self):
-        #     while True:
-        #         try:
-        #             # Si le texte "Retry later" est présent, on attend et on rafraîchit
-        #             WebDriverWait(driver, 0.5).until(
-        #                 EC.presence_of_element_located(
-        #                     (By.XPATH, "//pre[contains(text(), 'Retry later')]")
-        #                 )
-        #             )
-        #             print("Page en mode 'Retry later', redémarrage ... ")
-        #             print(f"Lien actuel : {page_link}")
-
-        #             # restart
-        #             driver.quit()
-        #             driver.delete_all_cookies()
-        #             driver.execute_script("window.localStorage.clear();")
-        #             driver.execute_script("window.sessionStorage.clear();")
-        #             driver.get("https://www.doctolib.fr/")
-        #             time.sleep(3)
-        #             driver = webdriver.Chrome(service=service)
-        #             time.sleep(3)
-        #             driver.get(page_link)
-        #             first = True
-
-        #             print("test")
-        #         except:
-        #             # Si l'élément n'est plus là, on sort de la boucle
-        #             break
-
     
     def store_json_data(self, data:list[dict], target_path:str):
         """
@@ -99,18 +69,66 @@ class CardsScraper:
             json.dump(output, f, indent=4, ensure_ascii=False)
 
     def look_for_next_page(self):
-        next_page_btn = self.driver.find_elements(By.XPATH, '//a[@rel="next"]')
+        try:
+            next_page_btn = WebDriverWait(self.driver, 15.0).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//a[@rel="next"]')
+                )
+            )
+            next_page_href = next_page_btn.get_attribute("href")
 
-        if next_page_btn:
-            lg.info("Next page does exist")
-            next_page_href = next_page_btn[0].get_attribute("href")
-        else:
-            lg.info("Next page doesn't exist")
+        except TimeoutException:
+            lg.info("Next page button not found")
             next_page_href = None
 
         return next_page_href
 
-    def run_scraping(self, place_input:str, query_input:str, first_run:bool=True):
+    def is_retry_later(self):
+        try:        
+            elem = WebDriverWait(self.driver, 10.0).until(
+                EC.presence_of_element_located(
+                    (
+                        By.XPATH,
+                        "//pre[contains(., 'Retry later')]"
+                        " | "
+                        "//span[contains(., \"Désolé, une erreur s'est produite.\")]"
+                    )
+                )
+            )
+
+            text = elem.text
+
+            if "Retry later" in text:
+                lg.warning("Retry later détecté")
+            elif "Désolé" in text:
+                lg.warning("Erreur Doctolib détectée")
+
+            return True
+
+        except TimeoutException:
+            lg.info("Retry later page is gone.")
+            return False
+        
+    def handle_retry_later(self, current_page):
+        backoff = 900
+
+        while self.is_retry_later():
+            lg.warning(f"Retry Later page detected -> waiting for {backoff}s")
+            time.sleep(backoff)
+
+            self.driver.delete_all_cookies()
+            self.driver.execute_script("window.localStorage.clear();")
+            self.driver.execute_script("window.sessionStorage.clear();")
+            self.driver.execute_script("location.reload(true);")
+            self.driver.get(current_page)
+
+            human_delay(alpha=20)
+        
+        lg.info("Retry Later went away -> Scraper get back to work")
+        time.sleep(5)
+        self.handle_cookies()
+
+    def run_scraping(self, place_input:str, query_input:str, only_href:bool=False):
         retrieved_data = []
         query_input = query_input.lower().replace(" ", "-")
         place_input = place_input.lower().replace(" ", "-")
@@ -125,35 +143,47 @@ class CardsScraper:
 
         self.handle_cookies()
 
+        current_page = page_link
+
         while True:
             next_page_href = self.look_for_next_page()
+            
+            if (next_page_href is None) and (self.is_retry_later()):
+                self.handle_retry_later(current_page)
+                next_page_href = self.look_for_next_page()
 
-            human_delay()
             try:
                 """Fetching CARDS"""
                 cards = self.driver.find_elements(By.CSS_SELECTOR, "div.dl-card-variant-default")
 
                 for card in cards:
-                    # physician's data
-                    elements = card.find_elements(By.CSS_SELECTOR, "div.p-16 h2, div.p-16 p")
-                    content = [ele.text.strip() for ele in elements if ele.text.strip() != ""]
-
-                    human_delay()
-
                     # physician's page link
                     href = card.find_elements(By.TAG_NAME, "a")[0].get_attribute("href")
 
-                    retrieved_data.append(
-                        {
-                            "Pratiquant":content[0],
-                            "Intitulé":content[1],
-                            "Adresse":content[2],
-                            "Ville":content[3],
-                            "Page_doctolib":href,
-                            "Nom_Recherche":query_input,
-                            "Lieu_Recherche":place_input
-                        }
-                    )
+                    if only_href:
+                        retrieved_data.append(
+                            {
+                                "Page_doctolib":href.split('&')[0],
+                                "Nom_Recherche":query_input,
+                                "Lieu_Recherche":place_input
+                            }
+                        )
+                    else:
+                        # physician's data
+                        elements = card.find_elements(By.CSS_SELECTOR, "div.p-16 h2, div.p-16 p")
+                        content = [ele.text.strip() for ele in elements if ele.text.strip() != ""]
+
+                        retrieved_data.append(
+                            {
+                                "Pratiquant":content[0],
+                                "Intitulé":content[1],
+                                "Adresse":content[2],
+                                "Ville":content[3],
+                                "Page_doctolib":href.split('&')[0],
+                                "Nom_Recherche":query_input,
+                                "Lieu_Recherche":place_input
+                            }
+                        )
 
             except Exception as e:
                 raise e
@@ -163,8 +193,13 @@ class CardsScraper:
                     data=retrieved_data,
                     target_path=self.target_path
                 )
+                lg.info(f"{len(retrieved_data)} profile(s) retrieved")
                 return "Scraping done"
             
             else:
+                human_delay(alpha=20)
+
                 self.driver.get(next_page_href)
-                human_delay()
+                current_page = next_page_href
+                current_page_nb = current_page.split("page=")[-1]
+                lg.info(f"Scraping page {current_page_nb} -- {(int(current_page_nb)-1)*20} cards scraped")
