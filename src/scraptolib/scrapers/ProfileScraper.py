@@ -1,4 +1,4 @@
-import time
+import time, datetime
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -58,7 +58,6 @@ class ProfileScraper(Scraper):
             except NoSuchElementException:
                 is_establishment = False
 
-            # print(f"Speciality method: {specialty.get_attribute('class')}")
             return (specialty.text, is_establishment)
         except TimeoutException:
             return ""
@@ -173,11 +172,63 @@ class ProfileScraper(Scraper):
         except TimeoutException:
             return ""
         
-    def run_scraping(self):
-        pass
+    def run_scraping(self, profile_href:str):
+        self.start_driver()
+        self.driver.get(profile_href) # assert href format
+        self.driver.execute_script("document.body.style.zoom='1%'")
 
-    def scrap_full_page():
-        pass
+        time.sleep(3)
+
+        locations = self.get_locations()
+
+        # avoid sending another useless request to doctolib
+        for i, location in enumerate(locations):
+            if location[1]==profile_href:
+                del locations[i]
+                locations.insert(0, location)
+                break
+
+        output = []
+        for i, location in enumerate(locations):
+            if i == 0: # avoid sending another useless request to doctolib
+                pass
+            else:
+                human_delay(alpha=5)
+                self.driver.get(location[1])
+                self.driver.execute_script("document.body.style.zoom='1%'")
+            
+            time.sleep(3)
+
+            name = self.get_name()
+            speciality = self.get_specialty()
+            address = self.get_address()
+            skills = self.get_skills()
+            languages = self.get_languages()
+            summary = self.get_summary()
+            website = self.get_website()
+            contact_details = self.get_contact_details()
+            prices = self.get_prices()
+            history = self.get_history()
+
+            output.append(
+                {
+                    "location": location,
+                    "name": name,
+                    "speciality": speciality,
+                    "address": address,
+                    "skills": skills,
+                    "languages": languages,
+                    "summary": summary,
+                    "website": website,
+                    "contact_details": contact_details,
+                    "prices": prices,
+                    "history": history,
+                    "scrap_timestamp":datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+            )
+        
+        self.stop_driver()
+        return output
 
 if __name__ == '__main__':
     print("test")
