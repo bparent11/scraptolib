@@ -94,7 +94,7 @@ class ProfileScraper(Scraper):
                 )
             )
 
-            return summary
+            return summary.text
         except TimeoutException:
             return ""
 
@@ -106,7 +106,7 @@ class ProfileScraper(Scraper):
                 )
             )
             
-            return languages.text.split('\n')[-1]
+            return languages.text.split('\n')[-1].replace(",", "").replace("et ", "").split()
         except TimeoutException:
             return ""
 
@@ -138,12 +138,16 @@ class ProfileScraper(Scraper):
     def get_prices(self):
         try:
             prices = WebDriverWait(self.driver, 5).until(
-                EC.presence_of_element_located(
+                EC.presence_of_all_elements_located(
                     (By.XPATH, "//h2[contains(text(), 'Tarifs')]/parent::div/ul/li")
                 )
             )
 
-            return prices.text
+            extraction = [elem.text.split("\n") for elem in prices]
+            return {
+                elem[0]:elem[1]
+                for elem in extraction
+            }
         except TimeoutException:
             return ""
         
@@ -154,10 +158,23 @@ class ProfileScraper(Scraper):
                     (By.XPATH, "//div[contains(@class, 'dl-profile-history')]")
                 )
             )
-
-            return [elem.text for elem in history]
+            extraction = [elem.text.split('\n') for elem in history]
+            
+            output = {}
+            for elem in extraction:
+                key = elem[0]
+                if key != "Associations":
+                    value = [(elem[i+1], elem[i+2]) for i in range(0, len(elem)-1, 2)]
+                    output[key] = value
+                else:
+                    output[key] = elem[1:]
+            return output
+        
         except TimeoutException:
             return ""
+        
+    def run_scraping(self):
+        pass
 
     def scrap_full_page():
         pass
