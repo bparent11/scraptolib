@@ -1,4 +1,4 @@
-# Disclaimer ⚠️
+# ⚠️ Disclaimer
 
 This project is provided **for educational purposes only**. The author **does not condone or encourage** scraping Doctolib or any other website in violation of their terms of service. Use of this code to scrape real websites is done **entirely at your own risk**, and the author **cannot be held responsible** for any legal or other consequences that may arise. This repository is intended solely to demonstrate web scraping techniques and Selenium usage in a safe, controlled environment.
 
@@ -38,4 +38,5 @@ It provides classes to retrieve detailed practitioner information, establishment
 TBD
 
 ## Examples
-Please refer yourself to the _examples_ folder. You will find example of use for cards scraper and profile scraper.
+Please refer yourself to the _examples_ folder. 
+You will find examples of use for CardsScraper and ProfileScraper.
