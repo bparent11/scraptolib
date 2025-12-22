@@ -173,7 +173,6 @@ class ProfileScraper(Scraper):
             return ""
         
     def run_scraping(self, profile_href:str):
-        self.start_driver()
         self.driver.get(profile_href) # assert href format
         self.driver.execute_script("document.body.style.zoom='1%'")
 
@@ -226,8 +225,6 @@ class ProfileScraper(Scraper):
                     "scrap_timestamp":datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
             )
-        
-        self.stop_driver()
         return output
 
 if __name__ == '__main__':
