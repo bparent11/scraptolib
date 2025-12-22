@@ -13,7 +13,40 @@ from scraptolib.utils.helpers import init_logger, human_delay
 
 class Scraper(ABC):
     """
-    Scraper is the abstract class which other scrapers inherit from
+    Abstract base class for web scrapers using Selenium.
+
+    Provides:
+    - Driver management (start/stop)
+    - Cookie banner handling
+    - Retry handling for temporary website errors
+    - Logging via `init_logger`
+
+    Subclasses must implement the abstract method `run_scraping`.
+
+    Methods
+    -------
+    __init__(driver_path: str)
+        Initializes the scraper with the path to the Chrome driver and a logger.
+
+    start_driver()
+        Starts a Selenium Chrome WebDriver if not already started.
+
+    stop_driver()
+        Stops the WebDriver, ignoring any exceptions if driver is already closed.
+
+    handle_cookies()
+        Attempts to click the "Refuser" button on cookie consent banners if present.
+
+    is_retry_later() -> bool
+        Detects "Retry later" or temporary error messages on the page.
+        Returns True if such messages are found, False otherwise.
+
+    handle_retry_later(current_page: str)
+        Waits and retries loading the page if a temporary error ("Retry later") is detected.
+        Clears cookies, localStorage, sessionStorage, reloads the page, and waits before retrying.
+
+    run_scraping()
+        Abstract method. Subclasses must implement this to define the scraping workflow.
     """
 
     def __init__(self, driver_path:str):

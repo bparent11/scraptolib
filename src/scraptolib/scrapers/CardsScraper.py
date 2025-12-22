@@ -8,8 +8,47 @@ from scraptolib.scrapers.Scraper import Scraper
 
 class CardsScraper(Scraper):
     """
-    Scraper designed to scrap pages similar to : https://www.doctolib.fr/search?location=xxx&speciality=xxx
+    Scraper designed to extract physician cards from Doctolib search pages (https://www.doctolib.fr/search?location=xxx&speciality=xxx).
+
+    Inherits from `Scraper` and provides specialized methods to:
+    - Navigate search result pages
+    - Extract physician profile URLs or detailed data
+    - Handle pagination automatically
+    - Store the results in a JSON file
+
+    Methods
+    -------
+    __init__(driver_path: str)
+        Initializes the CardsScraper with the path to the Chrome driver.
     
+    look_for_next_page() -> str | None
+        Checks for the presence of a "next page" button on the current search page.
+        Returns the URL of the next page if it exists, else returns None.
+
+    run_scraping(place_input: str, query_input: str, only_href: bool = False, target_path: str = "results_cards.json")
+        Starts the scraper and runs the full scraping process for the given location
+        (`place_input`) and specialty (`query_input`).
+        
+        Parameters
+        ----------
+        place_input : str
+            The city or location to search for.
+        query_input : str
+            The medical specialty or search query.
+        only_href : bool, optional
+            If True, only retrieves the profile URLs without full details (default False).
+        target_path : str, optional
+            Path to store the resulting JSON file (default "results_cards.json").
+        
+        Returns
+        -------
+        None
+            If no results are found for the query.
+        Stores
+        -------
+        JSON file at `target_path` containing a list of dictionaries with either:
+        - Only URLs (`Page_doctolib`, `Nom_Recherche`, `Lieu_Recherche`) if `only_href=True`
+        - Full physician data (`Pratiquant`, `Intitulé`, `Adresse`, `Ville`, `Page_doctolib`, `Nom_Recherche`, `Lieu_Recherche`) otherwise
     """
 
     def __init__(self, driver_path:str):

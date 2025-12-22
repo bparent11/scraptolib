@@ -5,13 +5,83 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-from scraptolib.utils.helpers import human_delay, store_json_data
+from scraptolib.utils.helpers import human_delay
 from scraptolib.scrapers.Scraper import Scraper
 
 class ProfileScraper(Scraper):
     """
-    Scraper designed to scrap pages similar to : "https://www.doctolib.fr/osteopathe/stains/xxx-xxx"
+    Scraper designed to extract detailed profile information from Doctolib practitioner pages.
+
+    Inherits from `Scraper` and provides specialized methods to:
+    - Extract locations associated with a practitioner
+    - Extract personal and professional details such as name, specialty, address, skills, languages, biography, website, contact details, prices, and history
+    - Handle multiple locations per practitioner
+    - Store scraping timestamp for each profile
+
+    Methods
+    -------
+    __init__(driver_path: str)
+        Initializes the ProfileScraper with the path to the Chrome driver.
     
+    get_locations() -> List[Tuple[str, str]]
+        Returns a list of tuples containing the location name and URL for each associated location.
+        Returns current URL if locations cannot be retrieved.
+
+    get_name() -> str
+        Returns the practitioner's name.
+
+    get_specialty() -> Tuple[str, bool] | str
+        Returns a tuple of specialty text and a boolean indicating if it is an establishment.
+        Returns empty string on timeout.
+
+    get_address() -> str
+        Returns the practitioner's address.
+
+    get_skills() -> List[str] | str
+        Returns a list of skills extracted from the profile, or empty string if not found.
+
+    get_summary() -> str
+        Returns the full biography/summary of the practitioner.
+
+    get_languages() -> List[str] | str
+        Returns a list of languages spoken by the practitioner.
+
+    get_website() -> str
+        Returns the practitioner's website URL.
+
+    get_contact_details() -> str
+        Returns contact details as a string with spaces removed.
+
+    get_prices() -> Dict[str, str] | str
+        Returns a dictionary mapping price type to value, or empty string if not found.
+
+    get_history() -> Dict[str, List[Tuple[str, str]]] | str
+        Returns a structured history dictionary (education, experience, associations).
+
+    run_scraping(profile_href: str) -> List[Dict]
+        Navigates to the practitioner's page and scrapes all available details for each associated location.
+
+        Parameters
+        ----------
+        profile_href : str
+            URL of the practitioner's profile page to start scraping.
+
+        Returns
+        -------
+        List[Dict]
+            Each dictionary contains:
+                - location: Tuple[name, URL]
+                - name: str
+                - speciality: Tuple[str, bool]
+                - address: str
+                - skills: List[str]
+                - languages: List[str]
+                - summary: str
+                - website: str
+                - contact_details: str
+                - prices: Dict[str, str]
+                - history: Dict[str, List[Tuple[str, str]]]
+                - scrap_timestamp: str (YYYY-MM-DD HH:MM:SS)
     """
 
     def __init__(self, driver_path:str):
