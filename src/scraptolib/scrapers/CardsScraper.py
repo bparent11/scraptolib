@@ -45,6 +45,12 @@ class CardsScraper(Scraper):
 
         self.driver.get(page_link)
 
+        if self.driver.current_url == "https://www.doctolib.fr/":
+            self.lg.warning(
+                f"place: {place_input} and query: {query_input} didn't return any results."
+            )
+            return None
+
         human_delay()
 
         self.handle_cookies()
