@@ -1,0 +1,171 @@
+[
+    {
+        "location": [
+            "",
+            "https://www.doctolib.fr/osteopathe/mimizan/guilhem-blanc?pid=practice-563603"
+        ],
+        "name": "Guilhem Blanc",
+        "speciality": [
+            "Ostéopathe",
+            false
+        ],
+        "address": "42 Avenue de Bordeaux, 40200 Mimizan",
+        "skills": [
+            "Dysfonctionnement temporo-mandibulaire (DTM)",
+            "K-Tape",
+            "Kinesio Taping",
+            "Ostéopathie crânienne",
+            "Ostéopathie de la femme enceinte",
+            "Ostéopathie du sport",
+            "Ostéopathie maxillo-faciale et oro-faciale"
+        ],
+        "languages": [
+            "Anglais",
+            "Français"
+        ],
+        "summary": "Consultations du lundi au samedi.\nConsultations à domicile à Mimizan et les communes limitrophes de Mimizan (Bias, Aureilhan, Saint-Paul-en-Born, Sainte-Eulalie-en-Born)\nConsultations à domicile possible également en semaine et le dimanche avec prise de rdv uniquement par téléphone (0764494389)\n\nL'ostéopathie est une approche thérapeutique manuelle prenant en compte le corps dans sa globalité. \nCette thérapie a pour objectif d'améliorer la mobilité et de réduire la douleur, elle s'inscrit parfaitement dans une prise en charge pluridisciplinaire des patients, en complémentarité avec la kinésithérapie, l'orthophonie, la podologie et bien d'autres. \nCependant, elle ne remplace ni n'exclut le diagnostic médical du médecin traitant.\n\nAvant toute chose, lors de l'entretien et de l'examen clinique, je m'assure que le problème présenté relève bien de l'ostéopathie. En cas de doute, je vous orienterai vers votre médecin traitant pour obtenir un avis médical.\nJ’utilise un éventail de techniques en fonction de votre douleur, de vos antécédents et de vos attentes. Je pratique notamment des manipulations, des mobilisations articulaires et musculaires, ainsi que des techniques abdominales, crâniennes, etc.\nMon objectif est de vous aider à prévenir et, si possible, vous apprendre à gérer par vous-même les éventuelles récidives douloureuses.\n\nPassionné par la recherche scientifique en ostéopathie et les neurosciences de la douleur, je me tiens régulièrement informé des avancées dans ces domaines afin de développer une approche aussi cohérente que possible.\nJe suis également formé pour traiter différents types de patients, des nourrissons aux personnes âgées, en passant par les sportifs et les femmes enceintes.\nPendant ma formation, j'ai eu l'opportunité de réaliser des stages dans des environnements hospitaliers sur le personnel soignant, au sein du CHU de Nantes et du CH de Saint-Nazaire.\n\nGrâce à mon parcours sportif, avec la pratique du rugby à la fois en tant que joueur amateur et en tant que soigneur, j'ai acquis une certaine compréhension des attentes des sportifs.\nDes interventions en milieux sportif dans le cadre de ma formation m’ont permis d’étoffer mes connaissances pour vous aider au mieux en vous fournissant des conseils en matière d'exercices de mobilité, de renforcement musculaire, d'étirements, etc.",
+        "website": "https://www.osteopathe-mimizan.fr/",
+        "contact_details": "0764494389",
+        "prices": {
+            "Consultation d'ostéopathie (Au cabinet)": "60 €",
+            "Consultation d'ostéopathie (Au domicile)": "65 €"
+        },
+        "history": {
+            "Diplômes nationaux et universitaires": [
+                [
+                    "2023",
+                    "Diplôme d'Ostéopathe (D.O.) - Institut des Hautes Études Ostéopathiques de Nantes (IDHEO-Nantes)"
+                ]
+            ],
+            "Autres formations": [
+                [
+                    "2024",
+                    "Know pain - Un guide pratique pour la prise en charge de la douleur persistante - Mike Stewart - Agence EBP"
+                ],
+                [
+                    "2024",
+                    "\"Ostéopathie pendant la grossesse\" par Anne MACQUET - Institut des Hautes Études Ostéopathiques de Nantes (IDHEO-Nantes)"
+                ],
+                [
+                    "2023",
+                    "Année complémentaire de formation à la pédagogie et la recherche en Ostéopathie - Institut des Hautes Études Ostéopathiques de Nantes (IDHEO-Nantes)"
+                ],
+                [
+                    "2022",
+                    "Le membre supérieur : prise en charge pluridisciplinaire sur la base de connaissances actualisées - Symposium Ostéopathique International de Nantes"
+                ]
+            ],
+            "Expérience": [
+                [
+                    "2023 - 2023",
+                    "Cabinet - Secondigny"
+                ],
+                [
+                    "2023 - 2023",
+                    "Intervenant - Centre Hospitalier de Saint-Nazaire - Saint-Nazaire - Personnels soignant et administratif"
+                ],
+                [
+                    "2023 - 2022",
+                    "Intervenant - Centre Hospitalier Universitaire (CHU) de Nantes - Nantes - Personnels soignant et administratif"
+                ]
+            ],
+            "Associations": [
+                "Membre - Syndicat Français des Ostéopathes (SFDO)"
+            ],
+            "Travaux et publications": [
+                [
+                    "2023",
+                    "Étude épidémiologique descriptive des caractéristiques des patients venant consulter au Centre de Consultation Ostéopathique d’IdHEO Nantes et de leur prise en charge pour un premier épisode de lombalgie commune aiguë - Mémoire"
+                ]
+            ]
+        },
+        "scrap_timestamp": "2025-12-22 16:59:57"
+    },
+    {
+        "location": [
+            "Lieu 1",
+            "https://www.doctolib.fr/osteopathe/sanguinet/romain-benard-ecobichon?pid=practice-382936"
+        ],
+        "name": "Romain Benard Ecobichon",
+        "speciality": [
+            "Ostéopathe",
+            false
+        ],
+        "address": "Cabinet paramédical\n6 Rue Auguste Renoir, 40200 Mimizan",
+        "skills": [
+            "Massage thérapeutique",
+            "Ostéopathie crânienne",
+            "Ostéopathie de la femme enceinte",
+            "Ostéopathie du sport",
+            "Ostéopathie pédiatrique",
+            "Ostéopathie structurelle"
+        ],
+        "languages": [
+            "Anglais",
+            "Espagnol",
+            "Français"
+        ],
+        "summary": "L’ostéopathie est une approche thérapeutique manuelle douce qui se fonde sur une vision globale de la structure du corps humain. L’ostéopathe va pratiquer des manipulations manuelles du système musculo-squelettique et utiliser des techniques de relâchement myofascial afin de soulager les tensions, les déséquilibres et les douleurs.\nPar exemple l’ostéopathe peut soigner les maux de dos, les entorses, le stress, les règles douloureuses ou encore les migraines. L’ostéopathie est à visée préventive et curative. Un ostéopathe peut recevoir différents types de patients : des nourrissons, des enfants, des sportifs, des femmes enceintes ou encore des seniors.",
+        "website": "http://www.osteopathe-benard.fr/",
+        "contact_details": "",
+        "prices": {
+            "consultation au cabinet": "60 €"
+        },
+        "history": {
+            "Diplômes nationaux et universitaires": [
+                [
+                    "2007",
+                    "Diplôme d'Ostéopathe (D.O.) - Université de Bordeaux"
+                ]
+            ],
+            "Expérience": [
+                [
+                    "2018 - 2024",
+                    "Cabinet - Mimizan"
+                ]
+            ]
+        },
+        "scrap_timestamp": "2025-12-22 17:00:10"
+    },
+    {
+        "location": [
+            "Lieu 2",
+            "https://www.doctolib.fr/osteopathe/sanguinet/romain-benard-ecobichon?pid=practice-453944"
+        ],
+        "name": "Romain Benard Ecobichon",
+        "speciality": [
+            "Ostéopathe",
+            false
+        ],
+        "address": "Résidence Le Pas du Braou\n44 Rue Nouvelle, 40460 Sanguinet",
+        "skills": [
+            "Ostéopathie de la femme enceinte",
+            "Ostéopathie du sport",
+            "Ostéopathie pédiatrique"
+        ],
+        "languages": [
+            "Anglais",
+            "Espagnol",
+            "Français"
+        ],
+        "summary": "L’ostéopathie est une approche thérapeutique manuelle douce qui se fonde sur une vision globale de la structure du corps humain. L’ostéopathe va pratiquer des manipulations manuelles du système musculo-squelettique et utiliser des techniques de relâchement myofascial afin de soulager les tensions, les déséquilibres et les douleurs.\nPar exemple l’ostéopathe peut soigner les maux de dos, les entorses, le stress, les règles douloureuses ou encore les migraines. L’ostéopathie est à visée préventive et curative. Un ostéopathe peut recevoir différents types de patients : des nourrissons, des enfants, des sportifs, des femmes enceintes ou encore des seniors.",
+        "website": "http://www.osteopathe-benard.fr/",
+        "contact_details": "",
+        "prices": "",
+        "history": {
+            "Diplômes nationaux et universitaires": [
+                [
+                    "2007",
+                    "Diplôme d'Ostéopathe (D.O.) - Université de Bordeaux"
+                ]
+            ],
+            "Expérience": [
+                [
+                    "2018 - 2024",
+                    "Cabinet - Mimizan"
+                ]
+            ]
+        },
+        "scrap_timestamp": "2025-12-22 17:00:33"
+    }
+]
