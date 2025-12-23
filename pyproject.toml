@@ -1,20 +1,11 @@
 [project]
 name = "scraptolib"
 version = "0.1.0"
-description = "Add your description here"
+description = "Educational web scraping framework using Selenium."
 readme = "README.md"
-authors = [
-    { name = "bparent11", email = "benjamin.parent@etu.minesparis.psl.eu" }
-]
 requires-python = ">=3.11"
+
 dependencies = [
-    "datetime>=6.0",
-    "logging>=0.4.9.6",
-    "pathlib>=1.0.1",
     "selenium>=4.39.0",
     "undetected-chromedriver>=3.5.5",
 ]
-
-[build-system]
-requires = ["uv_build>=0.9.16,<0.10.0"]
-build-backend = "uv_build"
