@@ -35,7 +35,27 @@ It provides classes to retrieve detailed practitioner information, establishment
 ---
 
 ## Installation  
-TBD
+1. Clone the repo
+```bash
+git clone https://github.com/<username>/scraptolib.git
+```
+
+2. Install uv with your package manager _example for pip_
+```bash
+pip install uv
+```
+
+3. Create your venv and install dependancies
+```bash
+uv venv
+uv sync
+```
+
+4. Install scraptolib
+Run this command at the root of your project (where pyproject.toml is)
+```bash
+uv pip install .
+```
 
 ## Examples
 Please refer yourself to the _examples_ folder. 
