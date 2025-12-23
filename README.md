@@ -34,7 +34,11 @@ It provides classes to retrieve detailed practitioner information, establishment
 
 ---
 
-## Installation  
+## Installation 
+### Driver
+Download your chromedriver through the following [link](https://developer.chrome.com/docs/chromedriver?hl=en)
+
+### Install the package with uv
 1. Clone the repo
 ```bash
 git clone https://github.com/<username>/scraptolib.git
@@ -56,6 +60,9 @@ Run this command at the root of your project (where pyproject.toml is)
 ```bash
 uv pip install .
 ```
+
+### Install the package with pip
+
 
 ## Examples
 Please refer yourself to the _examples_ folder. 
