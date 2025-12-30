@@ -232,7 +232,7 @@ class ProfileScraper(Scraper):
             output = {}
             for elem in extraction:
                 key = elem[0]
-                if key != "Associations":
+                if key not in ["Associations", "Formations"]:
                     value = [(elem[i+1], elem[i+2]) for i in range(0, len(elem)-1, 2)]
                     output[key] = value
                 else:
