@@ -25,6 +25,8 @@ for profile in data:
         )
     results += profile_data
 
+print(results)
+
 store_json_data(
     data=results,
     target_path=output_path

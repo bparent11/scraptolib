@@ -85,7 +85,7 @@ class Scraper(ABC):
 
     def is_retry_later(self):
         try:        
-            elem = WebDriverWait(self.driver, 10.0).until(
+            elem = WebDriverWait(self.driver, 0.1).until(
                 EC.presence_of_element_located(
                     (
                         By.XPATH,
