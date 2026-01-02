@@ -232,11 +232,11 @@ class ProfileScraper(Scraper):
             output = {}
             for elem in extraction:
                 key = elem[0]
-                if key not in ["Associations", "Formations"]:
-                    value = [(elem[i+1], elem[i+2]) for i in range(0, len(elem)-1, 2)]
+                try: # when there are dates
+                    value = [{"year":elem[i+1], "label":elem[i+2]} for i in range(0, len(elem)-1, 2)]
                     output[key] = value
-                else:
-                    output[key] = elem[1:]
+                except IndexError: # when not
+                    output[key] = {"year":"undefined", "label":elem[1:]}
             return output
         
         except TimeoutException:
@@ -244,9 +244,13 @@ class ProfileScraper(Scraper):
         
     def run_scraping(self, profile_href:str):
         self.driver.get(profile_href) # assert href format
-        self.driver.execute_script("document.body.style.zoom='1%'")
+        if self.is_retry_later():
+            self.handle_retry_later(
+                current_page=profile_href
+            )
 
-        time.sleep(3)
+        self.driver.execute_script("document.body.style.zoom='1%'")
+        time.sleep(1.5)
 
         locations = self.get_locations()
 
@@ -266,7 +270,7 @@ class ProfileScraper(Scraper):
                 self.driver.get(location[1])
                 self.driver.execute_script("document.body.style.zoom='1%'")
             
-            time.sleep(3)
+            time.sleep(1.5)
 
             name = self.get_name()
             speciality = self.get_specialty()
