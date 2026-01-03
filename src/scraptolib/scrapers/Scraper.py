@@ -70,6 +70,7 @@ class Scraper(ABC):
     def stop_driver(self):
         try:
             self.driver.quit()
+            self.driver = None
         except:
             pass
     
@@ -108,17 +109,17 @@ class Scraper(ABC):
         except TimeoutException:
             return False
         
-    def handle_retry_later(self, current_page):
-        backoff = 1200
-
+    def handle_retry_later(self, current_page): # fully reset the driver could work better
         while self.is_retry_later():
-            self.lg.warning(f"Retry Later page detected -> waiting for {backoff}s")
-            time.sleep(backoff)
+            # self.lg.warning(f"Retry Later page detected -> waiting for {backoff}s")
+            human_delay(alpha=15)
 
-            self.driver.delete_all_cookies()
-            self.driver.execute_script("window.localStorage.clear();")
-            self.driver.execute_script("window.sessionStorage.clear();")
-            self.driver.execute_script("location.reload(true);")
+            self.stop_driver()
+            self.start_driver()
+            # self.driver.delete_all_cookies()
+            # self.driver.execute_script("window.localStorage.clear();")
+            # self.driver.execute_script("window.sessionStorage.clear();")
+            # self.driver.execute_script("location.reload(true);")
             self.driver.get(current_page)
 
             human_delay(alpha=20)

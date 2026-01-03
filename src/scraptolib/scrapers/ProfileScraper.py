@@ -91,7 +91,7 @@ class ProfileScraper(Scraper):
 
     def get_locations(self):
         try:
-            locations = WebDriverWait(self.driver, 5).until(
+            locations = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_all_elements_located(
                     (By.XPATH, "//div[contains(@class, 'dl-pill-list')]//a")
                 )
@@ -102,7 +102,7 @@ class ProfileScraper(Scraper):
         
     def get_name(self):
         try:
-            name = WebDriverWait(self.driver, 5).until(
+            name = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//span[@itemprop='name']")
                 )
@@ -113,7 +113,7 @@ class ProfileScraper(Scraper):
 
     def get_specialty(self):
         try:
-            specialty = WebDriverWait(self.driver, 5).until(
+            specialty = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[@class='dl-profile-header-speciality']")
                 )
@@ -134,7 +134,7 @@ class ProfileScraper(Scraper):
 
     def get_address(self):
         try:
-            address = WebDriverWait(self.driver, 5).until(
+            address = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[contains(@data-test, 'location')]")
                 )
@@ -145,7 +145,7 @@ class ProfileScraper(Scraper):
     
     def get_skills(self):
         try:
-            skills = WebDriverWait(self.driver, 5).until(
+            skills = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[@class='dl-profile-skills']")
                 )
@@ -157,7 +157,7 @@ class ProfileScraper(Scraper):
     
     def get_summary(self):
         try:
-            summary = WebDriverWait(self.driver, 5).until(
+            summary = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[contains(@class, 'dl-profile-bio')]")
                 )
@@ -169,7 +169,7 @@ class ProfileScraper(Scraper):
 
     def get_languages(self):
         try:
-            languages = WebDriverWait(self.driver, 5).until(
+            languages = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//h3[contains(text(), 'Langues parlées')]/parent::div")
                 )
@@ -181,7 +181,7 @@ class ProfileScraper(Scraper):
 
     def get_website(self):
         try:
-            website = WebDriverWait(self.driver, 5).until(
+            website = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//h3[contains(text(), 'Site web')]/parent::div//a")
                 )
@@ -193,7 +193,7 @@ class ProfileScraper(Scraper):
     
     def get_contact_details(self):
         try:
-            contact_details = WebDriverWait(self.driver, 5).until(
+            contact_details = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//h3[contains(text(), 'Coordonnées')]/parent::div//div")
                 )
@@ -203,10 +203,9 @@ class ProfileScraper(Scraper):
         except TimeoutException:
             return ""
 
-    
     def get_prices(self):
         try:
-            prices = WebDriverWait(self.driver, 5).until(
+            prices = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_all_elements_located(
                     (By.XPATH, "//h2[contains(text(), 'Tarifs')]/parent::div/ul/li")
                 )
@@ -222,7 +221,7 @@ class ProfileScraper(Scraper):
         
     def get_history(self):
         try:
-            history = WebDriverWait(self.driver, 5).until(
+            history = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_all_elements_located(
                     (By.XPATH, "//div[contains(@class, 'dl-profile-history')]")
                 )
@@ -244,14 +243,13 @@ class ProfileScraper(Scraper):
         
     def run_scraping(self, profile_href:str):
         self.driver.get(profile_href) # assert href format
+        human_delay()
         if self.is_retry_later():
             self.handle_retry_later(
                 current_page=profile_href
             )
 
         self.driver.execute_script("document.body.style.zoom='1%'")
-        time.sleep(1.5)
-
         locations = self.get_locations()
 
         # avoid sending another useless request to doctolib
@@ -266,11 +264,12 @@ class ProfileScraper(Scraper):
             if i == 0: # avoid sending another useless request to doctolib
                 pass
             else:
-                human_delay(alpha=5)
                 self.driver.get(location[1])
+                if self.is_retry_later():
+                    self.handle_retry_later(
+                        current_page=location[1]
+                    )
                 self.driver.execute_script("document.body.style.zoom='1%'")
-            
-            time.sleep(1.5)
 
             name = self.get_name()
             speciality = self.get_specialty()
