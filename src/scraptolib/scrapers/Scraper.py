@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 import time
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,7 +15,7 @@ class Scraper(ABC):
     Abstract base class for web scrapers using Selenium.
 
     Provides:
-    - Driver management (start/stop)
+    - Driver management (start/stop) via Selenium Manager (auto-downloads the correct ChromeDriver)
     - Cookie banner handling
     - Retry handling for temporary website errors
     - Logging via `init_logger`
@@ -25,8 +24,9 @@ class Scraper(ABC):
 
     Methods
     -------
-    __init__(driver_path: str)
-        Initializes the scraper with the path to the Chrome driver and a logger.
+    __init__()
+        Initializes the scraper with a logger. No driver path needed — Selenium Manager
+        automatically resolves the correct ChromeDriver for your installed Chrome.
 
     start_driver()
         Starts a Selenium Chrome WebDriver if not already started.
@@ -49,23 +49,18 @@ class Scraper(ABC):
         Abstract method. Subclasses must implement this to define the scraping workflow.
     """
 
-    def __init__(self, driver_path:str):
-        """
-        
-        """
+    def __init__(self):
         self.lg = init_logger()
-        self.driver_path = driver_path
         self.driver = None
 
     def start_driver(self):
         if self.driver:
             pass
         else:
-            service = Service(executable_path=self.driver_path)
             options = Options()
             options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36")
             options.add_argument("--disable-blink-features=AutomationControlled")
-            self.driver = webdriver.Chrome(service=service, options=options)
+            self.driver = webdriver.Chrome(options=options)
 
     def stop_driver(self):
         try:
@@ -116,10 +111,6 @@ class Scraper(ABC):
 
             self.stop_driver()
             self.start_driver()
-            # self.driver.delete_all_cookies()
-            # self.driver.execute_script("window.localStorage.clear();")
-            # self.driver.execute_script("window.sessionStorage.clear();")
-            # self.driver.execute_script("location.reload(true);")
             self.driver.get(current_page)
 
             human_delay(alpha=20)

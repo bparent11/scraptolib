@@ -20,7 +20,7 @@ def init_logger():
 
     return lg
 
-def store_json_data(data:list[dict], target_path:str):
+def store_json_data(data:list[dict], target_path:str): # integrate drop_duplicated_from_json in it
     """
     Store line by line
     """

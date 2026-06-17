@@ -20,8 +20,8 @@ class ProfileScraper(Scraper):
 
     Methods
     -------
-    __init__(driver_path: str)
-        Initializes the ProfileScraper with the path to the Chrome driver.
+    __init__()
+        Initializes the ProfileScraper. ChromeDriver is resolved automatically via Selenium Manager.
     
     get_locations() -> List[Tuple[str, str]]
         Returns a list of tuples containing the location name and URL for each associated location.
@@ -84,10 +84,8 @@ class ProfileScraper(Scraper):
                 - scrap_timestamp: str (YYYY-MM-DD HH:MM:SS)
     """
 
-    def __init__(self, driver_path:str):
-        super().__init__(
-            driver_path=driver_path
-        )
+    def __init__(self):
+        super().__init__()
 
     def get_locations(self):
         try:

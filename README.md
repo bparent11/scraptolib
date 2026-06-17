@@ -35,9 +35,6 @@ It provides classes to retrieve detailed practitioner information, establishment
 ---
 
 ## Installation 
-### Driver
-Download your chromedriver through the following [link](https://developer.chrome.com/docs/chromedriver?hl=en)
-
 ### Install the package with uv
 1. Clone the repo
 ```bash
@@ -61,7 +58,8 @@ Run this command at the root of your project (where pyproject.toml is)
 uv pip install .
 ```
 
-### Install the package with pip
+> **Note:** ChromeDriver is managed automatically by Selenium Manager (bundled with Selenium 4.6+).  
+> You just need Google Chrome installed on your system — no manual driver download required.
 
 
 ## Examples

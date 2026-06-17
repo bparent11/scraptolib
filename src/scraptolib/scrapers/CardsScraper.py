@@ -18,8 +18,8 @@ class CardsScraper(Scraper):
 
     Methods
     -------
-    __init__(driver_path: str)
-        Initializes the CardsScraper with the path to the Chrome driver.
+    __init__()
+        Initializes the CardsScraper. ChromeDriver is resolved automatically via Selenium Manager.
     
     look_for_next_page() -> str | None
         Checks for the presence of a "next page" button on the current search page.
@@ -51,10 +51,8 @@ class CardsScraper(Scraper):
         - Full physician data (`Pratiquant`, `Intitulé`, `Adresse`, `Ville`, `Page_doctolib`, `Nom_Recherche`, `Lieu_Recherche`) otherwise
     """
 
-    def __init__(self, driver_path:str):
-        super().__init__(
-            driver_path=driver_path
-        )
+    def __init__(self):
+        super().__init__()
 
     def look_for_next_page(self):
         try:
