@@ -49,8 +49,9 @@ class Scraper(ABC):
         Abstract method. Subclasses must implement this to define the scraping workflow.
     """
 
-    def __init__(self):
+    def __init__(self, headless: bool = False):
         self.lg = init_logger()
+        self.headless = headless
         self.driver = None
 
     def start_driver(self):
@@ -60,6 +61,14 @@ class Scraper(ABC):
             options = Options()
             options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36")
             options.add_argument("--disable-blink-features=AutomationControlled")
+
+            if self.headless:
+                options.add_argument("--headless=new")
+                options.add_argument("--no-sandbox")
+                options.add_argument("--disable-dev-shm-usage")
+                options.add_argument("--disable-gpu")
+                options.add_argument("--window-size=1920,1080")
+
             self.driver = webdriver.Chrome(options=options)
 
     def stop_driver(self):

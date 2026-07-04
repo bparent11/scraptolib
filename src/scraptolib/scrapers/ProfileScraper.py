@@ -84,8 +84,8 @@ class ProfileScraper(Scraper):
                 - scrap_timestamp: str (YYYY-MM-DD HH:MM:SS)
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, headless: bool = False):
+        super().__init__(headless=headless)
 
     def get_locations(self):
         try:

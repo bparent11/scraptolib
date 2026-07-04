@@ -51,8 +51,8 @@ class CardsScraper(Scraper):
         - Full physician data (`Pratiquant`, `Intitulé`, `Adresse`, `Ville`, `Page_doctolib`, `Nom_Recherche`, `Lieu_Recherche`) otherwise
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, headless: bool = False):
+        super().__init__(headless=headless)
 
     def look_for_next_page(self):
         try:

@@ -1,0 +1,11 @@
+services:
+  scraper:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    environment:
+      - SCRAPE_URL=${SCRAPE_URL}
+      - SCRAPE_WEEKS=${SCRAPE_WEEKS:-4}
+    volumes:
+      - ./output:/app/output
+    command: ["--url", "${SCRAPE_URL}", "--weeks", "${SCRAPE_WEEKS:-4}", "--output", "output/results.json"]

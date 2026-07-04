@@ -101,8 +101,8 @@ class AvailabilityScraper(Scraper):
             when a blue dot is present).
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, headless: bool = False):
+        super().__init__(headless=headless)
 
     # ------------------------------------------------------------------
     # Motive selection
