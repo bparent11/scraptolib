@@ -267,7 +267,7 @@ class AvailabilityScraper(Scraper):
                 btn.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, cancelable: true}));
                 btn.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
             """, voir_plus_dates_btn)
-            human_delay(low=1, high=1)
+            human_delay(low=1, high=2)
 
     def get_day_cards(self):
         """Return all day card elements currently displayed on the page."""
@@ -291,21 +291,28 @@ class AvailabilityScraper(Scraper):
                 By.XPATH, ".//button[contains(@aria-label, 'Afficher')]"
             )
             self.driver.execute_script("arguments[0].click();", expand_btn)
-            human_delay(low=1, high=1)
+            human_delay(low=1, high=2)
         except NoSuchElementException:
             pass  # already expanded
 
     def click_voir_plus_in_card(self, card):
         """
         Click the 'Voir plus' button within a day card to reveal all hidden slots.
-        Uses JavaScript click to avoid interception by overlapping elements.
+        Uses full mouse event dispatch (mousedown/mouseup/click) because the React
+        Tappable component doesn't respond to a simple JS .click().
         Does nothing if the button is absent.
         """
         try:
             voir_plus_btn = card.find_element(
                 By.CSS_SELECTOR, "[data-test='more'] button"
             )
-            self.driver.execute_script("arguments[0].click();", voir_plus_btn)
+            self.driver.execute_script("""
+                var btn = arguments[0];
+                btn.scrollIntoView({block: 'center'});
+                btn.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
+                btn.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, cancelable: true}));
+                btn.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+            """, voir_plus_btn)
             human_delay(low=1, high=2)
         except NoSuchElementException:
             pass  # no hidden slots
@@ -470,7 +477,7 @@ class AvailabilityScraper(Scraper):
         self.lg.info(f"Practitioner: {practitioner_name}")
 
         # Shrink the page so all day cards are visible and clickable
-        self.driver.execute_script("document.body.style.zoom='5%'")
+        self.driver.execute_script("document.body.style.zoom='1%'")
 
         # Load more dates until we cover the requested number of weeks
         self.load_more_dates(weeks=weeks)
