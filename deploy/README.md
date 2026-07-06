@@ -84,13 +84,13 @@ CLI flags take precedence over environment variables.
 
 ```json
 {
-  "practitioner": "M. Guilhem Blanc",
+  "practitioner": "M. X X",
   "days": [
     {
       "date": "2026-06-22",
       "slots": [
-        {"datetime": "2026-06-22 10:00", "handled_by": "M. Guilhem Blanc"},
-        {"datetime": "2026-06-22 14:00", "handled_by": "Mme Emma Bonhomme"}
+        {"datetime": "2026-06-22 10:00", "handled_by": "M. X X"},
+        {"datetime": "2026-06-22 14:00", "handled_by": "Mme X X"}
       ]
     }
   ],
