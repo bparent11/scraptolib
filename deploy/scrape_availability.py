@@ -154,7 +154,6 @@ def main():
 
     # Also output JSON
     output = json.dumps(result, indent=2, ensure_ascii=False)
-    print(output)
 
     if args.output:
         with open(args.output, "w", encoding="utf-8") as f:
