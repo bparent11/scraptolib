@@ -13,3 +13,5 @@ wheels/
 deploy/output/
 
 .*
+!.github
+!.dockerignore

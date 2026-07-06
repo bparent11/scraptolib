@@ -1,0 +1,35 @@
+name: Scrape Availability
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"  # Every 4 hours
+  workflow_dispatch:         # Allow manual trigger from GitHub UI
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install dependencies
+        run: pip install .
+
+      - name: Run scraper
+        env:
+          SCRAPE_URL: ${{ secrets.SCRAPE_URL }}
+          SCRAPE_WEEKS: ${{ secrets.SCRAPE_WEEKS }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python deploy/scrape_availability.py --url "$SCRAPE_URL" --weeks "${SCRAPE_WEEKS:-4}"
