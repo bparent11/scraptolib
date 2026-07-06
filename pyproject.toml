@@ -7,5 +7,6 @@ requires-python = ">=3.11"
 
 dependencies = [
     "selenium>=4.39.0",
+    "supabase>=2.0.0",
     "undetected-chromedriver>=3.5.5",
 ]
