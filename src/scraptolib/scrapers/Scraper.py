@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 from scraptolib.utils.helpers import init_logger, human_delay
 
@@ -81,12 +81,34 @@ class Scraper(ABC):
     def handle_cookies(self):
         try:
             refuse_cookies_btn = WebDriverWait(self.driver, 5).until(
-                EC.element_to_be_clickable((By.XPATH, "//button[.//span[text()='Refuser']]"))
+                EC.element_to_be_clickable((
+                    By.XPATH,
+                    "//button[.//span[text()='Refuser']]"
+                    " | "
+                    "//button[contains(@id, 'didomi') and contains(., 'Refuser')]"
+                    " | "
+                    "//button[contains(@id, 'refuse')]"
+                    " | "
+                    "//button[contains(@class, 'didomi') and contains(., 'Refuser')]"
+                    " | "
+                    "//a[contains(@class, 'didomi') and contains(., 'refuser')]"
+                ))
             )
             refuse_cookies_btn.click()
 
         except TimeoutException:
-            self.lg.info("No cookies banner, scraping still going on ...")
+            # Fallback: try to dismiss Didomi popup via its known ID patterns
+            try:
+                didomi_btn = self.driver.find_element(
+                    By.CSS_SELECTOR,
+                    "#didomi-notice-disagree-button, "
+                    "[id*='didomi'][id*='disagree'], "
+                    "[id*='didomi'][id*='refuse'], "
+                    ".didomi-continue-without-agreeing"
+                )
+                didomi_btn.click()
+            except NoSuchElementException:
+                self.lg.info("No cookies banner, scraping still going on ...")
 
     def is_retry_later(self):
         try:        
