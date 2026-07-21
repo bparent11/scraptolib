@@ -6,8 +6,7 @@ $taskName = "ScraptoLib-Daily"
 $workDir = "C:\Users\Lenovo\Documents\2-Projets\DataScience\Scraping\scraptolib\deploy"
 
 $action = New-ScheduledTaskAction `
-    -Execute "powershell.exe" `
-    -Argument "-NoProfile -Command `"Set-Location '$workDir'; `$env:SCRAPE_DAYS='14'; `$env:ACTUALLY_SAVED_DAYS_END='12'; docker compose up --build`"" `
+    -Execute "C:\Users\Lenovo\Documents\2-Projets\DataScience\Scraping\scraptolib\deploy\scheduled_tasks\run_daily.bat" `
     -WorkingDirectory $workDir
 
 # Trigger: starts at 00:00, repeats every 12h for 365 days
