@@ -1,5 +1,5 @@
 # Scraptolib — Hourly task
-# Runs every 2h30 between 6:00 and 18:00
+# Runs every hour between 6:00 and 18:00
 # Scrapes 2 days, saves all
 
 $taskName = "ScraptoLib-Hourly"
@@ -7,20 +7,35 @@ $workDir = "C:\Users\Lenovo\Documents\2-Projets\DataScience\Scraping\scraptolib\
 
 $action = New-ScheduledTaskAction `
     -Execute "powershell.exe" `
-    -Argument "-NoProfile -Command `"`$env:SCRAPE_DAYS=2; `$env:ACTUALLY_SAVED_DAYS_END=0; docker compose up --build`"" `
+    -Argument "-NoProfile -Command `"Set-Location '$workDir'; `$env:SCRAPE_DAYS='2'; `$env:ACTUALLY_SAVED_DAYS_END='0'; docker compose up --build`"" `
     -WorkingDirectory $workDir
 
-# Trigger: every 2h30 between 6:00 and 18:00
-$trigger = New-ScheduledTaskTrigger `
-    -Daily `
-    -At "06:30"
-
-# Repetition: every 2h30 for 12 hours (6:30, 9:00, 11:30, 14:00, 16:30)
-$trigger.Repetition = (New-ScheduledTaskTrigger -Once -At "06:30" `
-    -RepetitionInterval (New-TimeSpan -Hours 2 -Minutes 30) `
+# Trigger: daily at 6:00, repeats every hour for 12h (6:00, 7:00, ..., 18:00)
+$trigger = New-ScheduledTaskTrigger -Daily -At "06:00"
+$trigger.Repetition = (New-ScheduledTaskTrigger -Once -At "06:00" `
+    -RepetitionInterval (New-TimeSpan -Hours 1) `
     -RepetitionDuration (New-TimeSpan -Hours 12)).Repetition
 
-$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -DontStopOnIdleEnd
+# Settings matching existing ScraptoLib task
+$settings = New-ScheduledTaskSettingsSet `
+    -AllowStartIfOnBatteries `
+    -DontStopIfGoingOnBatteries `
+    -WakeToRun `
+    -ExecutionTimeLimit (New-TimeSpan -Days 3) `
+    -MultipleInstances IgnoreNew `
+    -DeleteExpiredTaskAfter (New-TimeSpan -Days 30)
+
+$settings.RunOnlyIfNetworkAvailable = $false
+$settings.RunOnlyIfIdle = $false
+$settings.StartWhenAvailable = $false
+$settings.RestartCount = 3
+$settings.RestartInterval = "PT1M"
+
+# Principal: run as Lenovo, only when logged on, highest privileges
+$principal = New-ScheduledTaskPrincipal `
+    -UserId "Lenovo" `
+    -LogonType S4U `
+    -RunLevel Highest
 
 # Remove existing task if present
 Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
@@ -30,7 +45,7 @@ Register-ScheduledTask `
     -Action $action `
     -Trigger $trigger `
     -Settings $settings `
-    -RunLevel Highest `
-    -Description "Scraptolib: scrape 2 days every 2h30 (6h-18h)"
+    -Principal $principal `
+    -Description "Scraptolib: scrape 2 days, save all, every hour (6:00-18:00)"
 
 Write-Host "Task '$taskName' registered successfully."
