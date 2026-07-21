@@ -1,5 +1,5 @@
 # Scraptolib — Hourly task
-# Runs every hour between 6:00 and 18:00
+# Runs every hour between 5:30 and 17:30
 # Scrapes 2 days, saves all
 
 $taskName = "ScraptoLib-Hourly"
@@ -10,9 +10,9 @@ $action = New-ScheduledTaskAction `
     -Argument "-NoProfile -Command `"Set-Location '$workDir'; `$env:SCRAPE_DAYS='2'; `$env:ACTUALLY_SAVED_DAYS_END='0'; docker compose up --build`"" `
     -WorkingDirectory $workDir
 
-# Trigger: daily at 6:00, repeats every hour for 12h (6:00, 7:00, ..., 18:00)
-$trigger = New-ScheduledTaskTrigger -Daily -At "06:00"
-$trigger.Repetition = (New-ScheduledTaskTrigger -Once -At "06:00" `
+# Trigger: daily at 6:00, repeats every hour for 12h (5:30, 6:30, ..., 17:30)
+$trigger = New-ScheduledTaskTrigger -Daily -At "05:30"
+$trigger.Repetition = (New-ScheduledTaskTrigger -Once -At "05:30" `
     -RepetitionInterval (New-TimeSpan -Hours 1) `
     -RepetitionDuration (New-TimeSpan -Hours 12)).Repetition
 
@@ -46,6 +46,6 @@ Register-ScheduledTask `
     -Trigger $trigger `
     -Settings $settings `
     -Principal $principal `
-    -Description "Scraptolib: scrape 2 days, save all, every hour (6:00-18:00)"
+    -Description "Scraptolib: scrape 2 days, save all, every hour (5:30-17:30)"
 
 Write-Host "Task '$taskName' registered successfully."

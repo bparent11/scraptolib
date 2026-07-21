@@ -81,7 +81,7 @@ Three PowerShell scripts are provided to register automated scraping tasks at di
 
 | Task | Frequency | Scrape | Save | Schedule |
 |------|-----------|--------|------|----------|
-| `ScraptoLib-Hourly` | Every 2h30 | 2 days | All | 6:30, 9:00, 11:30, 14:00, 16:30 |
+| `ScraptoLib-Hourly` | Every 1h | 2 days | All | 5:30, 6:30, ..., 17:30 |
 | `ScraptoLib-Daily` | Every 12h | 14 days | Last 12 | 00:00, 12:00 |
 | `ScraptoLib-Weekly` | Every 24h | 35 days | Last 21 | 03:00 |
 
