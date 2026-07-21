@@ -59,7 +59,8 @@ def store_scrap_run(supabase, practitioner_id: int, days: int, save_last: int, s
         supabase.table("fact_scrap")
         .insert({
             "practitioner_id": practitioner_id,
-            "weeks_requested": days,  # repurposed as days_requested
+            "days_scraped": days,
+            "days_saved": save_last,
             "status": status,
         })
         .execute()
