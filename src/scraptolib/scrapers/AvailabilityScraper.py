@@ -234,15 +234,15 @@ class AvailabilityScraper(Scraper):
             return (last_date - first_date).days
         return 0
 
-    def load_more_dates(self, weeks: int = 4):
+    def load_more_dates(self, days: int = 28):
         """
         Click the 'Voir plus de dates' button repeatedly until the displayed date range
-        covers at least `weeks` weeks (default 4), or the button disappears.
+        covers at least `days` days (default 28), or the button disappears.
 
         Uses full mouse event dispatch (mousedown/mouseup/click) because the React
         Tappable component doesn't respond to a simple JS .click().
         """
-        target_days = weeks * 7
+        target_days = days
 
         while True:
             span = self._get_date_span_days()
@@ -421,10 +421,10 @@ class AvailabilityScraper(Scraper):
     # Main workflow
     # ------------------------------------------------------------------
 
-    def run_scraping(self, availability_url: str, motive_text: str | None = None, weeks: int = 4) -> dict:
+    def run_scraping(self, availability_url: str, motive_text: str | None = None, days: int = 28) -> dict:
         """
         Navigate to the booking page, handle the flow, and extract availability slots
-        for all days over the specified number of weeks.
+        for all days over the specified number of days.
 
         Parameters
         ----------
@@ -432,8 +432,8 @@ class AvailabilityScraper(Scraper):
             Full Doctolib booking URL (booking/availabilities or booking root).
         motive_text : str | None
             Motive button text to select. None = pick the first one automatically.
-        weeks : int
-            Number of weeks of availability to load (default 4).
+        days : int
+            Number of days of availability to load (default 28).
 
         Returns
         -------
@@ -479,8 +479,8 @@ class AvailabilityScraper(Scraper):
         # Shrink the page so all day cards are visible and clickable
         self.driver.execute_script("document.body.style.zoom='1%'")
 
-        # Load more dates until we cover the requested number of weeks
-        self.load_more_dates(weeks=weeks)
+        # Load more dates until we cover the requested number of days
+        self.load_more_dates(days=days)
 
         # Iterate over all displayed day cards
         day_cards = self.get_day_cards()

@@ -20,7 +20,7 @@ scraper = AvailabilityScraper()
 result = scraper.run_scraping(
     availability_url=profile_url,
     motive_text=None,  # auto-select the first motive if prompted
-    weeks=1,
+    days=28,
 )
 
 if result:

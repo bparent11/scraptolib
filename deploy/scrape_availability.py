@@ -2,24 +2,26 @@
 Standalone script to scrape Doctolib practitioner availabilities
 and store results in Supabase.
 
-Accepts a profile URL and number of weeks via CLI arguments or environment variables.
+Accepts a profile URL and time-based parameters via CLI arguments or environment variables.
 Stores each slot in the fact_availability table, linked to a fact_scrap run.
 
 Usage:
-    python scrape_availability.py --url <PROFILE_URL> [--weeks 4] [--output results.json]
+    python scrape_availability.py --url <PROFILE_URL> [--days 28] [--save-last 14] [--output results.json]
 
 Environment variables:
-    SCRAPE_URL          Practitioner profile or booking URL
-    SCRAPE_WEEKS        Number of weeks to scrape (default: 4)
-    SCRAPE_OUTPUT       Output file path (default: stdout only)
-    SUPABASE_URL        Supabase project URL
-    SUPABASE_KEY        Supabase service_role key (secret, bypasses RLS)
+    SCRAPE_URL                  Practitioner profile or booking URL
+    SCRAPE_DAYS                 Number of days to scrape (default: 28)
+    ACTUALLY_SAVED_DAYS_END     Number of days to actually store, counting from the end (default: all)
+    SCRAPE_OUTPUT               Output file path (default: stdout only)
+    SUPABASE_URL                Supabase project URL
+    SUPABASE_KEY                Supabase service_role key (secret, bypasses RLS)
 """
 
 import argparse
 import json
 import os
 import sys
+from datetime import date, timedelta
 
 from supabase import create_client
 
@@ -51,13 +53,13 @@ def get_or_create_practitioner(supabase, profile_url: str, practitioner_name: st
     return insert_response.data[0]["id"]
 
 
-def store_scrap_run(supabase, practitioner_id: int, weeks: int, status: str) -> int:
+def store_scrap_run(supabase, practitioner_id: int, days: int, save_last: int, status: str) -> int:
     """Insert a fact_scrap row and return its ID."""
     response = (
         supabase.table("fact_scrap")
         .insert({
             "practitioner_id": practitioner_id,
-            "weeks_requested": weeks,
+            "weeks_requested": days,  # repurposed as days_requested
             "status": status,
         })
         .execute()
@@ -66,11 +68,39 @@ def store_scrap_run(supabase, practitioner_id: int, weeks: int, status: str) -> 
     return response.data[0]["id"]
 
 
-def store_availabilities(supabase, scrap_id: int, result: dict, practitioner_name: str):
-    """Insert all availability slots from the scraping result."""
+def filter_days_to_save(result: dict, scrape_days: int, save_last: int) -> list[dict]:
+    """
+    Filter the scraped days to only keep the last `save_last` days.
+
+    If save_last >= scrape_days, all days are kept.
+    Otherwise, only days whose date >= (today + scrape_days - save_last) are kept.
+    """
+    if save_last >= scrape_days:
+        return result["days"]
+
+    cutoff_date = date.today() + timedelta(days=scrape_days - save_last)
+
+    filtered = []
+    for day in result["days"]:
+        # day["date"] is in "YYYY-MM-DD" format
+        try:
+            day_date = date.fromisoformat(day["date"])
+        except (ValueError, TypeError):
+            # If date parsing fails, keep it to be safe
+            filtered.append(day)
+            continue
+
+        if day_date >= cutoff_date:
+            filtered.append(day)
+
+    return filtered
+
+
+def store_availabilities(supabase, scrap_id: int, days_to_save: list[dict], practitioner_name: str):
+    """Insert filtered availability slots from the scraping result."""
     rows = []
 
-    for day in result["days"]:
+    for day in days_to_save:
         for slot in day["slots"]:
             is_substitute = slot["handled_by"] != practitioner_name
             rows.append({
@@ -101,10 +131,16 @@ def main():
         help="Practitioner profile or booking URL.",
     )
     parser.add_argument(
-        "--weeks",
+        "--days",
         type=int,
-        default=int(os.environ.get("SCRAPE_WEEKS", "4")),
-        help="Number of weeks to scrape (default: 4).",
+        default=int(os.environ.get("SCRAPE_DAYS", "28")),
+        help="Number of days to scrape (default: 28).",
+    )
+    parser.add_argument(
+        "--save-last",
+        type=int,
+        default=int(os.environ.get("ACTUALLY_SAVED_DAYS_END", "0")),
+        help="Only save the last N days from the scraped range. 0 = save all (default: 0).",
     )
     parser.add_argument(
         "--output",
@@ -117,6 +153,9 @@ def main():
 
     if not args.url:
         parser.error("A URL is required. Use --url or set SCRAPE_URL env variable.")
+
+    # If save_last is 0, save everything
+    save_last = args.save_last if args.save_last > 0 else args.days
 
     # Initialize Supabase client
     supabase_url = os.environ.get("SUPABASE_URL")
@@ -134,26 +173,39 @@ def main():
     result = scraper.run_scraping(
         availability_url=args.url,
         motive_text=None,
-        weeks=args.weeks,
+        days=args.days,
     )
 
     if not result:
         print("No availability data retrieved.", file=sys.stderr)
-        # Still record the failed scrap if we can identify the practitioner
         sys.exit(1)
+
+    # Filter days to only keep the relevant slice
+    days_to_save = filter_days_to_save(result, args.days, save_last)
+
+    print(
+        f"Scraped {len(result['days'])} day(s), saving {len(days_to_save)} day(s) "
+        f"(last {save_last} days of {args.days})",
+        file=sys.stderr,
+    )
 
     # Store in Supabase
     practitioner_name = result["practitioner"]
     practitioner_id = get_or_create_practitioner(supabase, args.url, practitioner_name)
 
-    scrap_id = store_scrap_run(supabase, practitioner_id, args.weeks, "success")
+    scrap_id = store_scrap_run(supabase, practitioner_id, args.days, save_last, "success")
 
-    slot_count = store_availabilities(supabase, scrap_id, result, practitioner_name)
+    slot_count = store_availabilities(supabase, scrap_id, days_to_save, practitioner_name)
 
     print(f"Stored {slot_count} slots (scrap_id={scrap_id}, practitioner_id={practitioner_id})", file=sys.stderr)
 
-    # Also output JSON
-    output = json.dumps(result, indent=2, ensure_ascii=False)
+    # Also output JSON (only saved days)
+    output_data = {
+        "practitioner": result["practitioner"],
+        "days": days_to_save,
+        "scrap_timestamp": result["scrap_timestamp"],
+    }
+    output = json.dumps(output_data, indent=2, ensure_ascii=False)
 
     if args.output:
         with open(args.output, "w", encoding="utf-8") as f:

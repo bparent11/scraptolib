@@ -5,9 +5,10 @@ services:
       dockerfile: deploy/Dockerfile
     environment:
       - SCRAPE_URL=${SCRAPE_URL}
-      - SCRAPE_WEEKS=${SCRAPE_WEEKS:-4}
+      - SCRAPE_DAYS=${SCRAPE_DAYS:-28}
+      - ACTUALLY_SAVED_DAYS_END=${ACTUALLY_SAVED_DAYS_END:-0}
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
     volumes:
       - ./output:/app/output
-    command: ["--url", "${SCRAPE_URL}", "--weeks", "${SCRAPE_WEEKS:-4}", "--output", "output/results.json"]
+    command: ["--url", "${SCRAPE_URL}", "--days", "${SCRAPE_DAYS:-28}", "--save-last", "${ACTUALLY_SAVED_DAYS_END:-0}", "--output", "output/results.json"]
