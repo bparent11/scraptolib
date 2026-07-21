@@ -25,6 +25,7 @@ COPY deploy/scrape_availability.py ./
 RUN pip install --no-cache-dir .
 
 # Default environment variables (can be overridden at runtime)
-ENV SCRAPE_WEEKS=4
+ENV SCRAPE_DAYS=28
+ENV ACTUALLY_SAVED_DAYS_END=0
 
 ENTRYPOINT ["python", "scrape_availability.py"]

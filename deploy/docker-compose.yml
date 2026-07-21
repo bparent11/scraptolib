@@ -11,4 +11,3 @@ services:
       - SUPABASE_KEY=${SUPABASE_KEY}
     volumes:
       - ./output:/app/output
-    command: ["--url", "${SCRAPE_URL}", "--days", "${SCRAPE_DAYS:-28}", "--save-last", "${ACTUALLY_SAVED_DAYS_END:-0}", "--output", "output/results.json"]
