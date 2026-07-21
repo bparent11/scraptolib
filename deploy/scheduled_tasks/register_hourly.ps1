@@ -22,8 +22,7 @@ $settings = New-ScheduledTaskSettingsSet `
     -DontStopIfGoingOnBatteries `
     -WakeToRun `
     -ExecutionTimeLimit (New-TimeSpan -Days 3) `
-    -MultipleInstances IgnoreNew `
-    -DeleteExpiredTaskAfter (New-TimeSpan -Days 30)
+    -MultipleInstances IgnoreNew
 
 $settings.RunOnlyIfNetworkAvailable = $false
 $settings.RunOnlyIfIdle = $false
